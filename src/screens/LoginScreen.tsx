@@ -1,12 +1,15 @@
-import { StackScreenProps } from '@react-navigation/stack'
 import React from 'react'
+import { StackScreenProps } from '@react-navigation/stack'
 import { Keyboard } from 'react-native'
-import { View, Text, Platform, TouchableOpacity, KeyboardAvoidingView } from 'react-native'
+import { View, Text, Platform, KeyboardAvoidingView } from 'react-native'
 import { TextInput } from 'react-native-gesture-handler'
+import AuthButton from '../components/AuthButton'
 import Background from '../components/Background'
+import RightClickableText from '../components/RightClickableText'
 import WhiteLogo from '../components/WhiteLogo'
 import useForm from '../hooks/useForm'
 import loginStyles from '../theme/loginTheme'
+import AuthInput from '../components/AuthInput'
 
 interface Props extends StackScreenProps<any, 'LoginScreen'> {}
 
@@ -30,50 +33,30 @@ const LoginScreen = ({navigation}: Props) => {
           <WhiteLogo />
 
           <Text style={loginStyles.title} >Login</Text>
-          {/* TODO: make a field component */}
-          <Text style={loginStyles.label} >Email</Text>
-          <TextInput 
-            placeholder="Write your email"
-            underlineColorAndroid="#ffffff" 
-            placeholderTextColor="rgba(255,255,255,0.4)" 
-            keyboardType="email-address" 
-            style={[loginStyles.inputField, (Platform.OS ==="ios") && loginStyles.inputFieldIos]}
-            selectionColor="#ffffff"
-            autoCorrect={false}
-            autoCapitalize="none"
-            onChangeText={(value) => onChange(value, 'email')}
-            onSubmitEditing={handleLogin}
+
+           <AuthInput 
+            isPassword
+            label="Email"
+            field="email"
+            keyboardType="email-address"
             value={email}
-          />
-          <Text style={loginStyles.label} >Password</Text>
-          <TextInput 
-            placeholder="Write your password"
-            secureTextEntry
-            underlineColorAndroid="#ffffff" 
-            placeholderTextColor="rgba(255,255,255,0.4)"  
-            style={[loginStyles.inputField, (Platform.OS ==="ios") && loginStyles.inputFieldIos]}
-            selectionColor="#ffffff"
-            autoCorrect={false}
-            autoCapitalize="none"
-            onChangeText={(value) => onChange(value, 'password')}
+            onChange={onChange}
             onSubmitEditing={handleLogin}
-            value={password}
           />
 
-          <View style={loginStyles.buttonContainer} >
-            <TouchableOpacity onPress={handleLogin} style={loginStyles.button} activeOpacity={0.8} >
-              <Text style={loginStyles.buttonText} >Login</Text>
-            </TouchableOpacity>
-          </View>
-          {/* I can easily make a component of this too */}
-          <View style={loginStyles.newUserContainer} >  
-            <TouchableOpacity 
-              onPress={() => navigation.replace('SignupScreen')} 
-              activeOpacity={0.8} 
-            >
-                <Text style={loginStyles.buttonText} > New Account </Text>
-            </TouchableOpacity>
-          </View>
+          <AuthInput 
+            isPassword
+            label="Password"
+            field="password"
+            keyboardType="default"
+            value={password}
+            onChange={onChange}
+            onSubmitEditing={handleLogin}
+          />
+
+          <AuthButton onPress={handleLogin} text="Login" />
+         
+          <RightClickableText route="SignupScreen" navigation={navigation} text="New Account" />
 
         </View>
       </KeyboardAvoidingView>
