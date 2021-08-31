@@ -1,13 +1,14 @@
 import React from 'react'
-import { KeyboardTypeOptions, Platform } from 'react-native'
-import { Text, TextInput } from 'react-native'
+import { KeyboardTypeOptions, Platform, View, Text, TextInput} from 'react-native'
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import loginStyles from '../theme/loginTheme'
 
 interface Props {
   label: string,
   placeholder?: string,
   keyboardType: KeyboardTypeOptions,
-  isPassword: boolean,
+  isPassword?: boolean,
+  icon?: string,
   field: string,
   value: string,
   auto?:boolean
@@ -16,11 +17,13 @@ interface Props {
   
 }
 
-const AuthInput = ({label, placeholder, keyboardType,isPassword, auto= false, field, value,onChange,onSubmitEditing}: Props) => {
+const AuthInput = ({label, placeholder, keyboardType,isPassword, auto= false, icon, field, value,onChange,onSubmitEditing}: Props) => {
 
   return (
     <>
       <Text style={loginStyles.label} >{label}</Text>
+      <View style={loginStyles.inputContainer} >
+      { icon && <Icon style={loginStyles.inputIcon} name={icon} size={20} color="#ffffff" />}
       <TextInput 
         placeholder={placeholder ? placeholder : `Write your ${label.toLowerCase()}`}
         secureTextEntry={isPassword}
@@ -35,6 +38,7 @@ const AuthInput = ({label, placeholder, keyboardType,isPassword, auto= false, fi
         onSubmitEditing={onSubmitEditing}
         value={value}
       />
+      </View>
     </>
   )
 }

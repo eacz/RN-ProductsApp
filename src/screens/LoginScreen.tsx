@@ -2,7 +2,6 @@ import React from 'react'
 import { StackScreenProps } from '@react-navigation/stack'
 import { Keyboard } from 'react-native'
 import { View, Text, Platform, KeyboardAvoidingView } from 'react-native'
-import { TextInput } from 'react-native-gesture-handler'
 import AuthButton from '../components/AuthButton'
 import Background from '../components/Background'
 import RightClickableText from '../components/RightClickableText'
@@ -35,26 +34,20 @@ const LoginScreen = ({navigation}: Props) => {
           <Text style={loginStyles.title} >Login</Text>
 
            <AuthInput 
-            isPassword
-            label="Email"
-            field="email"
-            keyboardType="email-address"
-            value={email}
-            onChange={onChange}
-            onSubmitEditing={handleLogin}
+            label="Email" field="email"
+            isPassword keyboardType="email-address"
+            onChange={onChange} onSubmitEditing={handleLogin}
+            value={email} icon="email"
           />
 
           <AuthInput 
-            isPassword
-            label="Password"
-            field="password"
-            keyboardType="default"
-            value={password}
-            onChange={onChange}
-            onSubmitEditing={handleLogin}
+            label="Password" field="password"
+            isPassword keyboardType="default"
+            onChange={onChange} onSubmitEditing={handleLogin}
+            value={password} icon="lock"
           />
 
-          <AuthButton onPress={handleLogin} text="Login" />
+          <AuthButton onPress={handleLogin} text="Login" iconButton="login" />
          
           <RightClickableText route="SignupScreen" navigation={navigation} text="New Account" />
 
