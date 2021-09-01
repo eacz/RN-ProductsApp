@@ -1,4 +1,5 @@
-import React, {createContext, useReducer} from 'react';
+import React, {createContext, useReducer, useEffect} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import productsApi from '../api/productsApi';
 import { User, LoginResponse, LoginData } from '../interfaces/AppInterfaces';
 import authReducer from './authReducer';
@@ -33,6 +34,10 @@ export const AuthContext = createContext({} as AuthContextProps)
 
 const AuthProvider = ({children}: {children: JSX.Element | JSX.Element[]}) => {
   const [state, dispatch] = useReducer(authReducer, authInitialState)
+
+  useEffect(() => {
+    checkToken()
+  }, [])
   
   const signUp = () => {
     
@@ -45,6 +50,7 @@ const AuthProvider = ({children}: {children: JSX.Element | JSX.Element[]}) => {
         password
       })
       dispatch({type: 'signIn', payload: { token, user: usuario }})
+      await AsyncStorage.setItem('token', token)
     } catch (error) {
       dispatch({type: 'addError', payload: error.response.data.msg || 'Información incorrecta'})
     }
@@ -58,6 +64,15 @@ const AuthProvider = ({children}: {children: JSX.Element | JSX.Element[]}) => {
     dispatch({ type: 'removeError' })
   }  
   
+  const checkToken = async () => {
+    const token = await AsyncStorage.getItem('token')
+    if(!token){
+      return dispatch({ type: 'notAuthenticated' })
+    } else {
+      
+    }
+  }
+
   return (
     <AuthContext.Provider
       value={{
