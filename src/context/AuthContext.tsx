@@ -1,5 +1,6 @@
 import React, {createContext, useReducer} from 'react';
-import { User } from '../interfaces/AppInterfaces';
+import productsApi from '../api/productsApi';
+import { User, LoginResponse, LoginData } from '../interfaces/AppInterfaces';
 import authReducer from './authReducer';
 
 
@@ -23,7 +24,7 @@ export type AuthContextProps = {
   user: User | null,
   status: 'checking' | 'authenticated' | 'not-authenticated'
   signUp: () => void,
-  login: () => void,
+  login: (data: LoginData) => void,
   logout: () => void,
   removeError: () => void
 }
@@ -37,8 +38,16 @@ const AuthProvider = ({children}: {children: JSX.Element | JSX.Element[]}) => {
     
   }
 
-  const login = () => {
-    
+  const login = async ({correo, password}: LoginData) => {
+    try {
+      const { data: { token, usuario } } = await productsApi.post<LoginResponse>('/auth/login', {
+        correo,
+        password
+      })
+      dispatch({type: 'signIn', payload: { token, user: usuario }})
+    } catch (error) {
+      dispatch({type: 'addError', payload: error.response.data.msg || 'Información incorrecta'})
+    }
   }  
 
   const logout = () => {
@@ -46,7 +55,7 @@ const AuthProvider = ({children}: {children: JSX.Element | JSX.Element[]}) => {
   }
 
   const removeError = () => {
-    
+    dispatch({ type: 'removeError' })
   }  
   
   return (
