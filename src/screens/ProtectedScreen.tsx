@@ -9,7 +9,7 @@ const ProtectedScreen = () => {
       <Text style={styles.title} >Protected Screen</Text>
       <Button title="Logout" onPress={logout} color="#5856d6" />
       <Text>
-        {JSON.stringify({...user, token}, null, 2)}
+        {JSON.stringify({...user, token}, null, 5)}
       </Text>
     </View>
   )

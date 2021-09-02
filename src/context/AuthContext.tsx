@@ -57,9 +57,8 @@ const AuthProvider = ({children}: {children: JSX.Element | JSX.Element[]}) => {
   }  
 
   const logout = async () => {
-    console.log('logout');
-    dispatch({type: 'logout'})
     await AsyncStorage.removeItem('token')
+    dispatch({type: 'logout'})
   }
 
   const removeError = () => {
