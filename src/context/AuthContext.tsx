@@ -49,15 +49,17 @@ const AuthProvider = ({children}: {children: JSX.Element | JSX.Element[]}) => {
         correo,
         password
       })
-      dispatch({type: 'signIn', payload: { token, user: usuario }})
       await AsyncStorage.setItem('token', token)
+      dispatch({type: 'signIn', payload: { token, user: usuario }})
     } catch (error) {
       dispatch({type: 'addError', payload: error.response.data.msg || 'Información incorrecta'})
     }
   }  
 
-  const logout = () => {
-    
+  const logout = async () => {
+    console.log('logout');
+    dispatch({type: 'logout'})
+    await AsyncStorage.removeItem('token')
   }
 
   const removeError = () => {
@@ -69,7 +71,12 @@ const AuthProvider = ({children}: {children: JSX.Element | JSX.Element[]}) => {
     if(!token){
       return dispatch({ type: 'notAuthenticated' })
     } else {
-      
+      const res = await productsApi.get<LoginResponse>('/auth')
+      if(res.status !== 200){
+        return dispatch({ type:'notAuthenticated' })
+      }
+      await AsyncStorage.setItem('token', token)
+      dispatch({type: 'signIn', payload: { token: res.data.token, user: res.data.usuario }})
     }
   }
 
