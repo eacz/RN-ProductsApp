@@ -1,24 +1,31 @@
-import React from 'react'
-import { KeyboardAvoidingView, Platform, View, Text, Keyboard } from 'react-native'
+import React, { useEffect, useContext } from 'react'
+import { KeyboardAvoidingView, Platform, View, Text, Keyboard, Alert } from 'react-native'
 import AuthButton from '../components/AuthButton'
-import Background from '../components/Background'
 import RightClickableText from '../components/RightClickableText'
 import WhiteLogo from '../components/WhiteLogo'
 import loginStyles from '../theme/loginTheme'
 import { StackScreenProps } from '@react-navigation/stack';
 import useForm from '../hooks/useForm'
 import AuthInput from '../components/AuthInput'
+import { AuthContext } from '../context/AuthContext';
 
 
 interface Props extends StackScreenProps<any, 'SignupScreen'> {}
 
 const SignupScreen = ({ navigation } : Props) => {
+  const { signUp, errorMessage, removeError } = useContext(AuthContext)
   const { email, password, name, onChange } = useForm({name: '', email: '', password: ''})
 
   const handleSignup = () => {
-    console.log({name,email,password});
+    signUp({correo: email, nombre: name, password})
     Keyboard.dismiss()
   }
+
+  useEffect(() => {
+    if(errorMessage.length === 0) return 
+    Alert.alert('Register failed', errorMessage, [ { text: 'Ok', onPress: removeError } ])
+  }, [errorMessage])
+
 
   return (
     <>

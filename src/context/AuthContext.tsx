@@ -1,7 +1,7 @@
 import React, {createContext, useReducer, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import productsApi from '../api/productsApi';
-import { User, LoginResponse, LoginData } from '../interfaces/AppInterfaces';
+import { User, LoginResponse, LoginData, RegisterData } from '../interfaces/AppInterfaces';
 import authReducer from './authReducer';
 
 
@@ -24,7 +24,7 @@ export type AuthContextProps = {
   token: string | null,
   user: User | null,
   status: 'checking' | 'authenticated' | 'not-authenticated'
-  signUp: () => void,
+  signUp: (data: RegisterData) => void,
   login: (data: LoginData) => void,
   logout: () => void,
   removeError: () => void
@@ -39,8 +39,13 @@ const AuthProvider = ({children}: {children: JSX.Element | JSX.Element[]}) => {
     checkToken()
   }, [])
   
-  const signUp = () => {
-    
+  const signUp = async ({correo, nombre, password} : RegisterData) => {
+    try {
+      await productsApi.post<LoginResponse>('/usuarios', { correo, nombre, password })
+      login({correo, password})
+    } catch (error: any) {
+      dispatch({type: 'addError', payload: error.response.data.errors[0].msg || 'That email is already registered'})
+    }
   }
 
   const login = async ({correo, password}: LoginData) => {
@@ -51,7 +56,7 @@ const AuthProvider = ({children}: {children: JSX.Element | JSX.Element[]}) => {
       })
       await AsyncStorage.setItem('token', token)
       dispatch({type: 'signIn', payload: { token, user: usuario }})
-    } catch (error) {
+    } catch (error: any) {
       dispatch({type: 'addError', payload: error.response.data.msg || 'Información incorrecta'})
     }
   }  

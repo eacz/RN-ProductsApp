@@ -40,7 +40,7 @@ const LoginScreen = ({navigation}: Props) => {
 
            <AuthInput 
             label="Email" field="email"
-            isPassword keyboardType="email-address"
+            keyboardType="email-address"
             onChange={onChange} onSubmitEditing={handleLogin}
             value={email} icon="email"
           />
