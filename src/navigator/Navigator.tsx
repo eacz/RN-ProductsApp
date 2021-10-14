@@ -5,6 +5,7 @@ import ProtectedScreen from '../screens/ProtectedScreen'
 import SignupScreen from '../screens/SignupScreen'
 import { AuthContext } from '../context/AuthContext';
 import LoadingScreen from '../screens/LoadingScreen'
+import ProductsNavigator from './ProductsNavigator';
 
 const Stack = createStackNavigator()
 
@@ -25,9 +26,11 @@ const Navigator = () => {
     >
       {
         status === 'authenticated'
-        ?
-          <Stack.Screen name="ProtectedScreen" component={ProtectedScreen}  />
-        
+        ? 
+          <>
+            <Stack.Screen name="ProductsNavigator" component={ProductsNavigator} />
+            <Stack.Screen name="ProtectedScreen" component={ProtectedScreen}  />
+          </>
         : <> 
             <Stack.Screen name="LoginScreen" component={LoginScreen}  />
             <Stack.Screen name="SignupScreen" component={SignupScreen}  />        
