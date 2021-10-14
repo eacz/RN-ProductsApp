@@ -1,5 +1,6 @@
-import React, { createContext, useState } from "react";
-import { Producto } from '../interfaces/AppInterfaces';
+import React, { createContext, useEffect, useState } from "react";
+import { Producto, GetProductsResponse } from '../interfaces/AppInterfaces';
+import productsApi from '../api/productsApi';
 
 type productsContextProps = {
   products: Producto[]
@@ -16,8 +17,17 @@ export const ProductsContext = createContext({} as productsContextProps)
 const ProductsProvider: React.FC = ({children}) => {
   const [products, setProducts] = useState<Producto[]>([])
 
+  useEffect(() => {
+    loadProducts()
+  }, [])
+
   const loadProducts = async  () => {
-    
+    try {
+      const res = await productsApi.get<GetProductsResponse>('/productos')
+      setProducts([...res.data.productos])
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   const addProduct = async  (categoryId: string, productName:  string) => {
