@@ -42,3 +42,19 @@ export interface Categoria {
   _id:    string;
   nombre: string;
 }
+
+export interface GetCategoriesResponse {
+  total:      number;
+  categorias: Categoria[];
+}
+
+export interface Categoria {
+  _id:     string;
+  nombre:  string;
+  usuario: Usuario;
+}
+
+export interface Usuario {
+  _id:    string;
+  nombre: string;
+}

@@ -42,7 +42,13 @@ const ProductsProvider: React.FC = ({children}) => {
     
   }
 
-  const loadProductById = async  (productId: string) => {
+  const loadProductById = async  (productId: string): Promise<Producto> => {
+    try {
+      const res = await productsApi.get<Producto>(`/productos/${productId}`)
+      return res.data
+    } catch (error) {
+      console.log('error');
+    }
     throw new Error('Not implemented')
   }
 
