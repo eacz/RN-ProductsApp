@@ -3,10 +3,11 @@ import { Producto, GetProductsResponse } from '../interfaces/AppInterfaces';
 import productsApi from '../api/productsApi';
 
 type productsContextProps = {
-  products: Producto[]
+  products: Producto[],
+  loading: boolean,
   loadProducts: () => Promise<void>
-  addProduct: (categoryId: string, productName:  string) => Promise<void>
-  updateProducts: (categoryId: string, productName:  string, productId: string) => Promise<void>
+  addProduct: (categoryId: string, productName:  string) => Promise<Producto>
+  updateProduct: (categoryId: string, productName:  string, productId: string) => Promise<void>
   deleteProduct: (productId: string) => Promise<void>
   loadProductById: (productId: string) => Promise<Producto>
   uploadImage: (data: any, id: string) => Promise<void> //TODO: type data
@@ -16,6 +17,7 @@ export const ProductsContext = createContext({} as productsContextProps)
 
 const ProductsProvider: React.FC = ({children}) => {
   const [products, setProducts] = useState<Producto[]>([])
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     loadProducts()
@@ -23,19 +25,32 @@ const ProductsProvider: React.FC = ({children}) => {
 
   const loadProducts = async  () => {
     try {
-      const res = await productsApi.get<GetProductsResponse>('/productos')
+      const res = await productsApi.get<GetProductsResponse>('/productos?limite=50')
       setProducts([...res.data.productos])
     } catch (error) {
       console.log(error);
     }
   }
 
-  const addProduct = async  (categoryId: string, productName:  string) => {
-    
+  const addProduct = async  (categoryId: string, productName:  string) : Promise <Producto> => {
+    setLoading(true)
+    const res = await productsApi.post<Producto>('/productos', {
+      nombre: productName,
+      categoria: categoryId
+    })
+    setProducts([...products, res.data])
+    setLoading(false)
+    return res.data
   }
-
-  const updateProducts = async  (categoryId: string, productName:  string, productId: string) => {
-    
+  
+  const updateProduct = async  (categoryId: string, productName:  string, productId: string) => {
+    setLoading(true)
+    const res = await productsApi.put<Producto>(`/productos/${productId}`, {
+      nombre: productName,
+      categoria: categoryId
+    })
+    setProducts(products.map(p => p._id === productId ? res.data : p))
+    setLoading(false)
   }
 
   const deleteProduct = async  (productId: string) => {
@@ -47,7 +62,7 @@ const ProductsProvider: React.FC = ({children}) => {
       const res = await productsApi.get<Producto>(`/productos/${productId}`)
       return res.data
     } catch (error) {
-      console.log('error');
+      console.log(error);
     }
     throw new Error('Not implemented')
   }
@@ -60,9 +75,10 @@ const ProductsProvider: React.FC = ({children}) => {
   return (
     <ProductsContext.Provider value={{
       products,
+      loading,
       loadProducts,
       addProduct,
-      updateProducts,
+      updateProduct,
       deleteProduct,
       loadProductById,
       uploadImage,
