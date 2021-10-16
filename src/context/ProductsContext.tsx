@@ -25,11 +25,13 @@ const ProductsProvider: React.FC = ({children}) => {
 
   const loadProducts = async  () => {
     try {
+      setLoading(true)
       const res = await productsApi.get<GetProductsResponse>('/productos?limite=50')
       setProducts([...res.data.productos])
     } catch (error) {
       console.log(error);
     }
+    setLoading(false)
   }
 
   const addProduct = async  (categoryId: string, productName:  string) : Promise <Producto> => {
