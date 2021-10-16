@@ -15,7 +15,7 @@ const ProductsScreen = ({ navigation }: Props) => {
   //set header button
   useEffect(() => {
     navigation.setOptions({
-      headerRight: () => <HeaderButton navigation={navigation} routePath="ProductScreen" title="Add"  />,
+      headerRight: () => <HeaderButton onPress={() => navigation.navigate('ProductScreen', {})} title="Add"  />,
     })
   })
 

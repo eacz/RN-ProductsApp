@@ -55,8 +55,17 @@ const ProductsProvider: React.FC = ({children}) => {
     setLoading(false)
   }
 
-  const deleteProduct = async  (productId: string) => {
+  const deleteProduct = async (productId: string) => {
+    try {
+      setLoading(true)
+      await productsApi.delete(`/productos/${productId}`)
+      setProducts(products.filter(p => p._id !== productId))
+    } catch (error) {
+      console.log(error)
+      
+    }
     
+    setLoading(false)
   }
 
   const loadProductById = async  (productId: string): Promise<Producto> => {

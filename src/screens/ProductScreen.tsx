@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react'
-import { View, Text, StyleSheet, TextInput, Button, ScrollView, Image, ActivityIndicator} from 'react-native'
+import { View, Text, StyleSheet, TextInput, Button, ScrollView, Image, ActivityIndicator, Alert} from 'react-native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { Picker } from '@react-native-picker/picker';
 import { ProductsStackParams } from '../navigator/ProductsNavigator';
@@ -7,12 +7,15 @@ import useCategories from '../hooks/useCategories';
 import useForm from '../hooks/useForm';
 import { ProductsContext } from '../context/ProductsContext';
 import LoadingScreen from './LoadingScreen';
+import HeaderButton from '../components/HeaderButton';
+import { AuthContext } from '../context/AuthContext';
 
 interface Props extends StackScreenProps<ProductsStackParams, 'ProductScreen'>{}
 
 const ProductScreen = ({ navigation, route: {params: { id = '', name = '' }}}: Props) => {
 
-  const { loadProductById, addProduct, updateProduct, loading } = useContext(ProductsContext)
+  const { loadProductById, addProduct, updateProduct, deleteProduct, loading } = useContext(ProductsContext)
+  const { user } = useContext(AuthContext)
   const { _id, categorieId, name: nameF, img, onChange, setFormValue } = useForm({
     _id: id,
     categorieId: '',
@@ -22,9 +25,30 @@ const ProductScreen = ({ navigation, route: {params: { id = '', name = '' }}}: P
   
   const { categories, isLoading } = useCategories()
 
+  const handleDelete = () => {
+     Alert.alert(
+      "Are you sure you want to delete this product?",
+      "This action is permanent",
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "OK", onPress: async () => {
+          await deleteProduct(_id)
+          navigation.pop()
+        } }
+      ]
+    );
+  }
+
   //set custom header title
   useEffect(() => {
-    navigation.setOptions({title: nameF || 'Product name'})
+    navigation.setOptions({
+      title: nameF || 'Product name',
+      headerRight: () => ( 
+        user?.rol === 'ADMIN_ROLE' && _id 
+        ? <HeaderButton title="Delete" backgroundColor="#d84242" onPress={() => handleDelete() } />
+        : <View></View>
+       ) 
+    })
   }, [nameF])
 
   useEffect(() => {

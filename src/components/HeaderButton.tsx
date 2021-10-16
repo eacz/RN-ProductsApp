@@ -1,20 +1,17 @@
 import React from 'react'
 import { Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { StackNavigationProp } from '@react-navigation/stack'
-import { ProductsStackParams } from '../navigator/ProductsNavigator'
 
 interface Props {
-  navigation: StackNavigationProp<ProductsStackParams, 'ProductsScreen'>
-  routePath: keyof ProductsStackParams,
-  routeParams?: object,
-  title: string
+  title: string,
+  onPress: () => void,
+  backgroundColor?: string
 }
 
-const HeaderButton = ({navigation, title, routePath, routeParams = {}}: Props) => {
+const HeaderButton = ({ title, onPress, backgroundColor = '#3150ff'}: Props) => {
   return (
     <TouchableOpacity 
-      activeOpacity={0.8} style={styles.headerRight}
-      onPress={() => navigation.navigate(routePath, routeParams)} 
+      activeOpacity={0.8} style={{...styles.headerRight, backgroundColor}}
+      onPress={onPress} 
     >
       <Text style={styles.headerRightText} >{title}</Text>
     </TouchableOpacity>
@@ -28,7 +25,6 @@ const styles = StyleSheet.create({
   },
   headerRight: {
     marginRight: 20,
-    backgroundColor: '#3150ff',
     padding:8,
     borderRadius: 10
   },
