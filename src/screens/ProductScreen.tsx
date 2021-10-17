@@ -1,7 +1,8 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { View, Text, StyleSheet, TextInput, Button, ScrollView, Image, ActivityIndicator, Alert} from 'react-native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { Picker } from '@react-native-picker/picker';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import { ProductsStackParams } from '../navigator/ProductsNavigator';
 import useCategories from '../hooks/useCategories';
 import useForm from '../hooks/useForm';
@@ -16,6 +17,7 @@ const ProductScreen = ({ navigation, route: {params: { id = '', name = '' }}}: P
 
   const { loadProductById, addProduct, updateProduct, deleteProduct, loading } = useContext(ProductsContext)
   const { user } = useContext(AuthContext)
+  const [tempImage, setTempImage] = useState<string>('')
   const { _id, categorieId, name: nameF, img, onChange, setFormValue } = useForm({
     _id: id,
     categorieId: '',
@@ -67,6 +69,15 @@ const ProductScreen = ({ navigation, route: {params: { id = '', name = '' }}}: P
     })
   }
 
+  const takePhoto = () => {
+    launchCamera({ mediaType: 'photo', quality: 0.5 }, (res) => {
+      console.log(res);
+      if(res.didCancel) return
+      if(!res.assets?.[0].uri) return
+      setTempImage(res.assets?.[0].uri)
+    })
+  }
+
   const saveOrUpdate = async () => {
     if(id.length > 0){
       updateProduct(categorieId, nameF, id)
@@ -111,14 +122,15 @@ const ProductScreen = ({ navigation, route: {params: { id = '', name = '' }}}: P
           _id.length > 0 &&  
           //TODO: wrap this on a component
             <View style={styles.buttonContainer} >
-              <Button title="Camera" onPress={() => {}} color="#5856d6" />
+              <Button title="Camera" onPress={takePhoto} color="#5856d6" />
               <View style={{width: 10}} />
               <Button title="Gallery" onPress={() => {}} color="#5856d6" />
             </View>
         }
        
         {/*//TODO: show temporal image*/}
-        {img.length > 0 &&  <Image source={{uri: img}} style={styles.image} />}
+        {(img.length > 0  && !tempImage )&&  <Image source={{uri: img}} style={styles.image} />}
+        {tempImage.length > 0 &&  <Image source={{uri: tempImage}} style={styles.image} />}
        
       </ScrollView>
     </View>
