@@ -15,10 +15,10 @@ interface Props extends StackScreenProps<ProductsStackParams, 'ProductScreen'>{}
 
 const ProductScreen = ({ navigation, route: {params: { id = '', name = '' }}}: Props) => {
 
-  const { loadProductById, addProduct, updateProduct, deleteProduct, loading } = useContext(ProductsContext)
+  const { loadProductById, addProduct, updateProduct, deleteProduct, uploadImage, loading } = useContext(ProductsContext)
   const { user } = useContext(AuthContext)
   const [tempImage, setTempImage] = useState<string>('')
-  const { _id, categorieId, name: nameF, img, onChange, setFormValue } = useForm({
+  const { _id, categorieId, form, name: nameF, img, onChange, setFormValue } = useForm({
     _id: id,
     categorieId: '',
     name: name,
@@ -75,6 +75,7 @@ const ProductScreen = ({ navigation, route: {params: { id = '', name = '' }}}: P
       if(res.didCancel) return
       if(!res.assets?.[0].uri) return
       setTempImage(res.assets?.[0].uri)
+      uploadImage(res, _id)
     })
   }
 
@@ -118,6 +119,9 @@ const ProductScreen = ({ navigation, route: {params: { id = '', name = '' }}}: P
           : <Button  title="Save" onPress={saveOrUpdate} color="#5856d6" />
 
         }
+        {( img.length > 0 && !tempImage  )&&  <Image source={{uri: img}} style={styles.image} />}
+        {tempImage.length > 0 &&  <Image source={{uri: tempImage}} style={styles.image} />}
+        
         {
           _id.length > 0 &&  
           //TODO: wrap this on a component
@@ -127,11 +131,7 @@ const ProductScreen = ({ navigation, route: {params: { id = '', name = '' }}}: P
               <Button title="Gallery" onPress={() => {}} color="#5856d6" />
             </View>
         }
-       
-        {/*//TODO: show temporal image*/}
-        {(img.length > 0  && !tempImage )&&  <Image source={{uri: img}} style={styles.image} />}
-        {tempImage.length > 0 &&  <Image source={{uri: tempImage}} style={styles.image} />}
-       
+
       </ScrollView>
     </View>
   )

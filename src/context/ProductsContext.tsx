@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useState } from "react";
 import { Producto, GetProductsResponse } from '../interfaces/AppInterfaces';
 import productsApi from '../api/productsApi';
+import { ImagePickerResponse } from "react-native-image-picker";
 
 type productsContextProps = {
   products: Producto[],
@@ -78,8 +79,23 @@ const ProductsProvider: React.FC = ({children}) => {
     throw new Error('Not implemented')
   }
 
-  const uploadImage = async  (data: any, id: string) => {
-    
+  const uploadImage = async  (data: ImagePickerResponse, id: string) => {
+    const fileToUpload = {
+      uri: data.assets?.[0].uri,
+      type: data.assets?.[0].type,
+      name: data.assets?.[0].fileName,
+    }
+
+    const formData = new FormData()
+    formData.append('archivo', fileToUpload)
+
+    try {
+      const res = await productsApi.put<Producto>(`/uploads/productos/${id}`, formData)
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+      
+    }
   }
 
 
